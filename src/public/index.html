@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Personal Portfolio - Full Stack Developer">
+  <title>Portfolio | Full Stack Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="header" id="header">
+    <nav class="nav container">
+      <a href="#" class="nav__logo" aria-label="Home">Portfolio</a>
+      <button class="nav__toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation">
+        <span class="nav__toggle-icon"></span>
+      </button>
+      <ul class="nav__menu" id="nav-menu" role="menubar">
+        <li role="none"><a href="#home" class="nav__link" role="menuitem">Home</a></li>
+        <li role="none"><a href="#about" class="nav__link" role="menuitem">About</a></li>
+        <li role="none"><a href="#skills" class="nav__link" role="menuitem">Skills</a></li>
+        <li role="none"><a href="#projects" class="nav__link" role="menuitem">Projects</a></li>
+        <li role="none"><a href="#contact" class="nav__link" role="menuitem">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home" aria-labelledby="hero-title">
+      <div class="container hero__container">
+        <div class="hero__content">
+          <h1 id="hero-title" class="hero__title">Hi, I'm <span class="hero__name"></span></h1>
+          <p class="hero__subtitle" id="hero-subtitle"></p>
+          <p class="hero__description" id="hero-description"></p>
+          <div class="hero__actions">
+            <a href="#projects" class="btn btn--primary">View Projects</a>
+            <a href="#contact" class="btn btn--secondary">Get In Touch</a>
+          </div>
+          <div class="hero__social" id="hero-social" aria-label="Social links"></div>
+        </div>
+        <div class="hero__image" aria-hidden="true">
+          <div class="hero__shape"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="about" id="about" aria-labelledby="about-title">
+      <div class="container">
+        <header class="section-header">
+          <h2 id="about-title" class="section__title">About Me</h2>
+          <p class="section__subtitle">Get to know me better</p>
+        </header>
+        <div class="about__content">
+          <div class="about__text" id="about-text"></div>
+          <div class="about__details" id="about-details"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="skills" id="skills" aria-labelledby="skills-title">
+      <div class="container">
+        <header class="section-header">
+          <h2 id="skills-title" class="section__title">Skills & Technologies</h2>
+          <p class="section__subtitle">Tools and technologies I work with</p>
+        </header>
+        <div class="skills__categories" id="skills-categories" role="list"></div>
+      </div>
+    </section>
+
+    <section class="projects" id="projects" aria-labelledby="projects-title">
+      <div class="container">
+        <header class="section-header">
+          <h2 id="projects-title" class="section__title">Featured Projects</h2>
+          <p class="section__subtitle">Some of my recent work</p>
+        </header>
+        <div class="projects__filters" role="group" aria-label="Filter projects">
+          <button class="filter-btn active" data-filter="all" aria-pressed="true">All</button>
+          <button class="filter-btn" data-filter="web" aria-pressed="false">Web</button>
+          <button class="filter-btn" data-filter="mobile" aria-pressed="false">Mobile</button>
+          <button class="filter-btn" data-filter="api" aria-pressed="false">API</button>
+        </div>
+        <div class="projects__grid" id="projects-grid" role="list"></div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact" aria-labelledby="contact-title">
+      <div class="container">
+        <header class="section-header">
+          <h2 id="contact-title" class="section__title">Get In Touch</h2>
+          <p class="section__subtitle">Have a project in mind? Let's talk</p>
+        </header>
+        <form class="contact__form" id="contact-form" novalidate>
+          <div class="form__group">
+            <label for="name" class="form__label">Name</label>
+            <input type="text" id="name" name="name" class="form__input" required aria-required="true" autocomplete="name">
+            <span class="form__error" aria-live="polite"></span>
+          </div>
+          <div class="form__group">
+            <label for="email" class="form__label">Email</label>
+            <input type="email" id="email" name="email" class="form__input" required aria-required="true" autocomplete="email">
+            <span class="form__error" aria-live="polite"></span>
+          </div>
+          <div class="form__group">
+            <label for="subject" class="form__label">Subject</label>
+            <input type="text" id="subject" name="subject" class="form__input" required aria-required="true" autocomplete="off">
+            <span class="form__error" aria-live="polite"></span>
+          </div>
+          <div class="form__group">
+            <label for="message" class="form__label">Message</label>
+            <textarea id="message" name="message" class="form__input form__textarea" rows="5" required aria-required="true"></textarea>
+            <span class="form__error" aria-live="polite"></span>
+          </div>
+          <button type="submit" class="btn btn--primary btn--full" id="submit-btn">
+            <span class="btn__text">Send Message</span>
+            <span class="btn__loader" aria-hidden="true"></span>
+          </button>
+          <p class="form__message" id="form-message" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <p class="footer__copyright" id="footer-copyright"></p>
+      <div class="footer__social" id="footer-social" aria-label="Social links"></div>
+    </div>
+  </footer>
+
+  <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="/js/main.js" type="module"></script>
+</body>
+</html>
