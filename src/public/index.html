@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Personal Portfolio - Full Stack Developer">
-  <title>Portfolio | Full Stack Developer</title>
+  <meta name="description" content="Angad Paswan - Full Stack Developer Portfolio">
+  <title>Angad Paswan | Full Stack Developer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
   <header class="header" id="header">
     <nav class="nav container">
-      <a href="#" class="nav__logo" aria-label="Home">Portfolio</a>
+      <a href="#" class="nav__logo" aria-label="Home" id="nav-logo">Portfolio</a>
       <button class="nav__toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation">
         <span class="nav__toggle-icon"></span>
       </button>
@@ -28,11 +28,32 @@
   </header>
 
   <main>
-    <section class="hero" id="home" aria-labelledby="hero-title">
+    <section class="hero scroll-reveal" id="home" aria-labelledby="hero-title">
+      <canvas class="hero__bg-canvas" aria-hidden="true"></canvas>
+      <div class="hero__particles" aria-hidden="true">
+        <div class="hero__particle"></div>
+        <div class="hero__particle"></div>
+        <div class="hero__particle"></div>
+        <div class="hero__particle"></div>
+        <div class="hero__particle"></div>
+        <div class="hero__particle"></div>
+        <div class="hero__particle"></div>
+        <div class="hero__particle"></div>
+      </div>
+      <div class="hero__sun" aria-hidden="true"></div>
+      <div class="hero__3d-scene" aria-hidden="true">
+        <div class="hero__orb hero__orb--1"></div>
+        <div class="hero__orb hero__orb--2"></div>
+        <div class="hero__orb hero__orb--3"></div>
+        <div class="hero__orb hero__orb--4"></div>
+      </div>
       <div class="container hero__container">
         <div class="hero__content">
+          <span class="hero__badge">
+            <span aria-hidden="true">🌅</span> Full Stack Developer
+          </span>
           <h1 id="hero-title" class="hero__title">Hi, I'm <span class="hero__name"></span></h1>
-          <p class="hero__subtitle" id="hero-subtitle"></p>
+          <p class="hero__subtitle" id="hero-subtitle"><span class="typing-text"></span></p>
           <p class="hero__description" id="hero-description"></p>
           <div class="hero__actions">
             <a href="#projects" class="btn btn--primary">View Projects</a>
@@ -41,25 +62,32 @@
           <div class="hero__social" id="hero-social" aria-label="Social links"></div>
         </div>
         <div class="hero__image" aria-hidden="true">
-          <div class="hero__shape"></div>
+          <div class="hero__avatar" id="hero-avatar">
+            <img id="hero-avatar-img" src="" alt="" style="display:none;">
+            <div class="hero__avatar-fallback" aria-hidden="true">👤</div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="about" id="about" aria-labelledby="about-title">
+    <section class="about scroll-reveal" id="about" aria-labelledby="about-title">
       <div class="container">
         <header class="section-header">
           <h2 id="about-title" class="section__title">About Me</h2>
           <p class="section__subtitle">Get to know me better</p>
         </header>
         <div class="about__content">
+          <div class="about__avatar" id="about-avatar">
+            <img id="about-avatar-img" src="" alt="" style="display:none;">
+            <div class="about__avatar-fallback" aria-hidden="true">👤</div>
+          </div>
           <div class="about__text" id="about-text"></div>
           <div class="about__details" id="about-details"></div>
         </div>
       </div>
     </section>
 
-    <section class="skills" id="skills" aria-labelledby="skills-title">
+    <section class="skills scroll-reveal" id="skills" aria-labelledby="skills-title">
       <div class="container">
         <header class="section-header">
           <h2 id="skills-title" class="section__title">Skills & Technologies</h2>
@@ -69,7 +97,7 @@
       </div>
     </section>
 
-    <section class="projects" id="projects" aria-labelledby="projects-title">
+    <section class="projects scroll-reveal" id="projects" aria-labelledby="projects-title">
       <div class="container">
         <header class="section-header">
           <h2 id="projects-title" class="section__title">Featured Projects</h2>
@@ -85,7 +113,7 @@
       </div>
     </section>
 
-    <section class="contact" id="contact" aria-labelledby="contact-title">
+    <section class="contact scroll-reveal" id="contact" aria-labelledby="contact-title">
       <div class="container">
         <header class="section-header">
           <h2 id="contact-title" class="section__title">Get In Touch</h2>
@@ -94,22 +122,22 @@
         <form class="contact__form" id="contact-form" novalidate>
           <div class="form__group">
             <label for="name" class="form__label">Name</label>
-            <input type="text" id="name" name="name" class="form__input" required aria-required="true" autocomplete="name">
+            <input type="text" id="name" name="name" class="form__input" required aria-required="true" autocomplete="name" placeholder="Your name">
             <span class="form__error" aria-live="polite"></span>
           </div>
           <div class="form__group">
             <label for="email" class="form__label">Email</label>
-            <input type="email" id="email" name="email" class="form__input" required aria-required="true" autocomplete="email">
+            <input type="email" id="email" name="email" class="form__input" required aria-required="true" autocomplete="email" placeholder="your@email.com">
             <span class="form__error" aria-live="polite"></span>
           </div>
           <div class="form__group">
             <label for="subject" class="form__label">Subject</label>
-            <input type="text" id="subject" name="subject" class="form__input" required aria-required="true" autocomplete="off">
+            <input type="text" id="subject" name="subject" class="form__input" required aria-required="true" autocomplete="off" placeholder="Project inquiry, collaboration, etc.">
             <span class="form__error" aria-live="polite"></span>
           </div>
           <div class="form__group">
             <label for="message" class="form__label">Message</label>
-            <textarea id="message" name="message" class="form__input form__textarea" rows="5" required aria-required="true"></textarea>
+            <textarea id="message" name="message" class="form__input form__textarea" rows="5" required aria-required="true" placeholder="Tell me about your project..."></textarea>
             <span class="form__error" aria-live="polite"></span>
           </div>
           <button type="submit" class="btn btn--primary btn--full" id="submit-btn">
@@ -131,6 +159,25 @@
 
   <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
-  <script src="/js/main.js" type="module"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    // Direct test to verify API works
+    fetch('/api/profile')
+      .then(r => r.json())
+      .then(data => {
+        console.log('Direct API test:', data);
+        if (data.success && data.data) {
+          const p = data.data;
+          document.getElementById('hero-name')?.textContent = p.name;
+          document.getElementById('hero-description')?.textContent = p.bio;
+          document.getElementById('about-details')?.innerHTML = `
+            <div class="detail-card"><div class="detail-card__icon">✉️</div><div class="detail-card__content"><div class="detail-card__title">Email</div><div class="detail-card__value">${p.email}</div></div></div>
+            <div class="detail-card"><div class="detail-card__icon">📍</div><div class="detail-card__content"><div class="detail-card__title">Location</div><div class="detail-card__value">${p.location}</div></div></div>
+            <div class="detail-card"><div class="detail-card__icon">📞</div><div class="detail-card__content"><div class="detail-card__title">Phone</div><div class="detail-card__value">${p.phone}</div></div></div>
+          `;
+        }
+      })
+      .catch(e => console.error('Direct fetch failed:', e));
+  </script>
 </body>
 </html>

@@ -5,6 +5,14 @@ class PortfolioApp {
     this.profile = null;
     this.projects = [];
     this.skills = {};
+    this.typingIndex = 0;
+    this.typingTexts = [
+      'Full Stack Developer',
+      'React & Node.js Expert',
+      'MongoDB & Express Specialist',
+      'Problem Solver',
+      'Code Enthusiast'
+    ];
     this.init();
   }
 
@@ -13,6 +21,8 @@ class PortfolioApp {
       await this.loadData();
       this.render();
       this.bindEvents();
+      this.startTypingAnimation();
+      this.initScrollReveal();
     } catch (error) {
       console.error('Failed to initialize portfolio:', error);
       this.showToast('Failed to load portfolio data', 'error');
@@ -20,19 +30,30 @@ class PortfolioApp {
   }
 
   async loadData() {
-    const [profileRes, projectsRes, skillsRes] = await Promise.all([
-      fetch(`${API_BASE}/profile`),
-      fetch(`${API_BASE}/projects?limit=100`),
-      fetch(`${API_BASE}/skills`)
-    ]);
+    try {
+      const [profileRes, projectsRes, skillsRes] = await Promise.all([
+        fetch(`${API_BASE}/profile`),
+        fetch(`${API_BASE}/projects?limit=100`),
+        fetch(`${API_BASE}/skills`)
+      ]);
 
-    const profileData = await profileRes.json();
-    const projectsData = await projectsRes.json();
-    const skillsData = await skillsRes.json();
+      console.log('API responses:', profileRes.status, projectsRes.status, skillsRes.status);
 
-    if (profileData.success) this.profile = profileData.data;
-    if (projectsData.success) this.projects = projectsData.data;
-    if (skillsData.success) this.skills = skillsData.data;
+      const profileData = await profileRes.json();
+      const projectsData = await projectsRes.json();
+      const skillsData = await skillsRes.json();
+
+      console.log('Profile data:', profileData);
+      console.log('Projects data:', projectsData);
+      console.log('Skills data:', skillsData);
+
+      if (profileData.success) this.profile = profileData.data;
+      if (projectsData.success) this.projects = projectsData.data;
+      if (skillsData.success) this.skills = skillsData.data;
+    } catch (error) {
+      console.error('loadData error:', error);
+      throw error;
+    }
   }
 
   render() {
@@ -53,9 +74,16 @@ class PortfolioApp {
     const heroSocialEl = document.getElementById('hero-social');
     const footerSocialEl = document.getElementById('footer-social');
     const footerCopyrightEl = document.getElementById('footer-copyright');
+    const navLogoEl = document.getElementById('nav-logo');
+    const heroAvatarEl = document.getElementById('hero-avatar');
+    const heroAvatarImgEl = document.getElementById('hero-avatar-img');
+    const aboutAvatarEl = document.getElementById('about-avatar');
+    const aboutAvatarImgEl = document.getElementById('about-avatar-img');
 
     if (nameEl) nameEl.textContent = this.profile.name;
-    if (subtitleEl) subtitleEl.textContent = this.profile.title;
+    if (subtitleEl) {
+      subtitleEl.innerHTML = '<span class="typing-text"></span>';
+    }
     if (descriptionEl) descriptionEl.textContent = this.profile.bio;
     if (aboutTextEl) aboutTextEl.innerHTML = this.formatBio(this.profile.bio);
     
@@ -74,6 +102,13 @@ class PortfolioApp {
     if (footerCopyrightEl) {
       footerCopyrightEl.textContent = `© ${new Date().getFullYear()} ${this.profile.name}. All rights reserved.`;
     }
+
+    if (navLogoEl) {
+      navLogoEl.textContent = this.profile.name.split(' ')[0];
+    }
+
+    this.renderAvatar(heroAvatarEl, heroAvatarImgEl);
+    this.renderAvatar(aboutAvatarEl, aboutAvatarImgEl);
 
     document.title = `${this.profile.name} | ${this.profile.title}`;
   }
@@ -112,8 +147,10 @@ class PortfolioApp {
     return details.map(detail => `
       <div class="detail-card">
         <div class="detail-card__icon">${detail.icon}</div>
-        <div class="detail-card__title">${detail.title}</div>
-        <div class="detail-card__value">${detail.value}</div>
+        <div class="detail-card__content">
+          <div class="detail-card__title">${detail.title}</div>
+          <div class="detail-card__value">${detail.value}</div>
+        </div>
       </div>
     `).join('');
   }
@@ -146,31 +183,57 @@ class PortfolioApp {
     return links.join('');
   }
 
+  renderAvatar(avatarContainer, avatarImg) {
+    if (!avatarContainer || !avatarImg) return;
+    
+    const avatarUrl = this.profile?.avatar;
+    if (avatarUrl && this.isValidUrl(avatarUrl)) {
+      avatarImg.src = avatarUrl;
+      avatarImg.alt = this.profile.name;
+      avatarImg.style.display = 'block';
+      const fallback = avatarContainer.querySelector('.hero__avatar-fallback, .about__avatar-fallback');
+      if (fallback) fallback.style.display = 'none';
+    } else {
+      avatarImg.style.display = 'none';
+      const fallback = avatarContainer.querySelector('.hero__avatar-fallback, .about__avatar-fallback');
+      if (fallback) fallback.style.display = 'flex';
+    }
+  }
+
+  isValidUrl(string) {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   renderSkills() {
     const container = document.getElementById('skills-categories');
     if (!container) return;
 
     const categoryConfig = {
-      frontend: { title: 'Frontend', icon: '🎨', color: '#3b82f6' },
-      backend: { title: 'Backend', icon: '⚙️', color: '#8b5cf6' },
-      database: { title: 'Database', icon: '🗄️', color: '#10b981' },
-      devops: { title: 'DevOps', icon: '☁️', color: '#f59e0b' },
-      tools: { title: 'Tools', icon: '🔧', color: '#6366f1' },
-      'soft-skills': { title: 'Soft Skills', icon: '💡', color: '#ec4899' },
-      other: { title: 'Other', icon: '📦', color: '#64748b' }
+      frontend: { title: 'Frontend', icon: '🎨', color: '#0ea5e9', light: '#38bdf8' },
+      backend: { title: 'Backend', icon: '⚙️', color: '#8b5cf6', light: '#a78bfa' },
+      database: { title: 'Database', icon: '🗄️', color: '#10b981', light: '#34d399' },
+      devops: { title: 'DevOps', icon: '☁️', color: '#f59e0b', light: '#fbbf24' },
+      tools: { title: 'Tools', icon: '🔧', color: '#06b6d4', light: '#22d3ee' },
+      'soft-skills': { title: 'Soft Skills', icon: '💡', color: '#f43f5e', light: '#fb7185' },
+      other: { title: 'Other', icon: '📦', color: '#64748b', light: '#94a3b8' }
     };
 
     const categories = Object.entries(this.skills);
     
     if (categories.length === 0) {
-      container.innerHTML = '<p class="text-center">No skills available</p>';
+      container.innerHTML = '<p style="text-align:center;color:var(--color-text-muted);">No skills available</p>';
       return;
     }
 
     container.innerHTML = categories.map(([category, skills]) => {
       const config = categoryConfig[category] || categoryConfig.other;
       return `
-        <div class="skill-category">
+        <div class="skill-category" style="--cat-color: ${config.color};">
           <div class="skill-category__header">
             <div class="skill-category__icon" style="background-color: ${config.color}">
               ${config.icon}
@@ -178,7 +241,7 @@ class PortfolioApp {
             <h3 class="skill-category__title">${config.title}</h3>
           </div>
           <div class="skill-category__list">
-            ${skills.map(skill => this.renderSkillItem(skill)).join('')}
+            ${skills.map(skill => this.renderSkillItem(skill, config)).join('')}
           </div>
         </div>
       `;
@@ -187,18 +250,27 @@ class PortfolioApp {
     this.animateSkillBars();
   }
 
-  renderSkillItem(skill) {
+  renderSkillItem(skill, categoryConfig) {
     const icon = skill.icon || '⚡';
-    const color = skill.color || '#2563eb';
+    const color = skill.color || categoryConfig.color;
+    const lightColor = skill.color ? this.lightenColor(skill.color) : categoryConfig.light;
     return `
-      <div class="skill-item">
-        <div class="skill-item__icon" style="color: ${color}">${icon}</div>
+      <div class="skill-item" style="--skill-color: ${color}; --skill-color-light: ${lightColor};">
+        <div class="skill-item__icon" style="background: linear-gradient(135deg, ${color}, ${lightColor})">${icon}</div>
         <div class="skill-item__name">${skill.name}</div>
         <div class="skill-item__bar">
-          <div class="skill-item__progress" style="width: 0%; background-color: ${color}" data-progress="${skill.proficiency}"></div>
+          <div class="skill-item__progress" style="width: 0%; background: linear-gradient(90deg, ${color}, ${lightColor})" data-progress="${skill.proficiency}"></div>
         </div>
       </div>
     `;
+  }
+
+  lightenColor(hex) {
+    const num = parseInt(hex.replace('#', ''), 16);
+    const r = Math.min(255, Math.floor((num >> 16) * 1.3));
+    const g = Math.min(255, Math.floor(((num >> 8) & 0x00FF) * 1.3));
+    const b = Math.min(255, Math.floor((num & 0x0000FF) * 1.3));
+    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
   }
 
   animateSkillBars() {
@@ -206,16 +278,16 @@ class PortfolioApp {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const bars = entry.target.querySelectorAll('.skill-item__progress');
-          bars.forEach(bar => {
+          bars.forEach((bar, index) => {
             const progress = bar.dataset.progress;
             setTimeout(() => {
               bar.style.width = `${progress}%`;
-            }, 200);
+            }, 200 + index * 100);
           });
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.5 });
+    }, { threshold: 0.3 });
 
     document.querySelectorAll('.skill-category').forEach(el => observer.observe(el));
   }
@@ -225,7 +297,7 @@ class PortfolioApp {
     if (!container) return;
 
     if (this.projects.length === 0) {
-      container.innerHTML = '<p class="text-center">No projects available</p>';
+      container.innerHTML = '<p style="text-align:center;color:var(--color-text-muted);">No projects available</p>';
       return;
     }
 
@@ -236,29 +308,32 @@ class PortfolioApp {
   renderProjectCard(project) {
     const imageHtml = project.images && project.images.length > 0 
       ? `<img src="${project.images[0].url}" alt="${project.images[0].alt || project.title}" loading="lazy">`
-      : `<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-light));display:flex;align-items:center;justify-content:center;color:white;font-size:3rem;">${this.getCategoryIcon(project.category)}</div>`;
+      : `<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--color-primary),var(--color-accent));display:flex;align-items:center;justify-content:center;color:white;font-size:3rem;">${this.getCategoryIcon(project.category)}</div>`;
 
     const techHtml = project.technologies && project.technologies.length > 0
       ? project.technologies.slice(0, 6).map(tech => `<span class="project-card__tech-tag">${tech}</span>`).join('')
       : '';
 
     const linksHtml = [];
-    if (project.links?.live) linksHtml.push(`<a href="${project.links.live}" class="project-card__link" target="_blank" rel="noopener noreferrer">Live Demo</a>`);
+    if (project.links?.live) linksHtml.push(`<a href="${project.links.live}" class="project-card__link project-card__link--primary" target="_blank" rel="noopener noreferrer">Live Demo</a>`);
     if (project.links?.github) linksHtml.push(`<a href="${project.links.github}" class="project-card__link" target="_blank" rel="noopener noreferrer">Code</a>`);
     if (project.links?.demo) linksHtml.push(`<a href="${project.links.demo}" class="project-card__link" target="_blank" rel="noopener noreferrer">Demo</a>`);
 
     return `
       <article class="project-card" data-category="${project.category}" role="listitem">
-        <div class="project-card__image">${imageHtml}</div>
+        <div class="project-card__image">
+          ${imageHtml}
+          <div class="project-card__overlay"></div>
+          <div class="project-card__links">${linksHtml.join('')}</div>
+        </div>
         <div class="project-card__content">
           <div class="project-card__meta">
             <span class="project-card__category project-card__category--${project.category}">${project.category}</span>
-            ${project.featured ? '<span class="project-card__category project-card__category--featured">Featured</span>' : ''}
+            ${project.featured ? '<span class="project-card__category" style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#b45309;border-color:#fcd34d;">Featured</span>' : ''}
           </div>
           <h3 class="project-card__title">${project.title}</h3>
           <p class="project-card__description">${project.shortDescription || project.description.substring(0, 150)}...</p>
           <div class="project-card__tech">${techHtml}</div>
-          <div class="project-card__links">${linksHtml.join('')}</div>
         </div>
       </article>
     `;
@@ -456,7 +531,48 @@ class PortfolioApp {
         header.classList.remove('scrolled');
       }
     });
+  }
 
+  startTypingAnimation() {
+    const typingEl = document.querySelector('.typing-text');
+    if (!typingEl) return;
+
+    let textIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    const typingSpeed = 100;
+    const deletingSpeed = 50;
+    const pauseTime = 2000;
+
+    const type = () => {
+      const currentText = this.typingTexts[textIndex];
+      
+      if (isDeleting) {
+        typingEl.textContent = currentText.substring(0, charIndex - 1);
+        charIndex--;
+      } else {
+        typingEl.textContent = currentText.substring(0, charIndex + 1);
+        charIndex++;
+      }
+
+      let speed = isDeleting ? deletingSpeed : typingSpeed;
+
+      if (!isDeleting && charIndex === currentText.length) {
+        speed = pauseTime;
+        isDeleting = true;
+      } else if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        textIndex = (textIndex + 1) % this.typingTexts.length;
+        speed = 500;
+      }
+
+      setTimeout(type, speed);
+    };
+
+    type();
+  }
+
+  initScrollReveal() {
     const observerOptions = {
       threshold: 0.1,
       rootMargin: '0px 0px -50px 0px'
@@ -465,24 +581,12 @@ class PortfolioApp {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
+          entry.target.classList.add('visible');
         }
       });
     }, observerOptions);
 
-    document.querySelectorAll('section').forEach(section => {
-      section.style.opacity = '0';
-      section.style.transform = 'translateY(20px)';
-      section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-      observer.observe(section);
-    });
-
-    const hero = document.getElementById('home');
-    if (hero) {
-      hero.style.opacity = '1';
-      hero.style.transform = 'none';
-    }
+    document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
   }
 
   showToast(message, type = 'info') {
@@ -516,8 +620,4 @@ class PortfolioApp {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  new PortfolioApp();
-});
-
-export { PortfolioApp };
+new PortfolioApp();

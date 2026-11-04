@@ -23,7 +23,7 @@ const seedData = async () => {
       email: 'angadpaswanap316960@gmail.com',
       phone: '+91 9372280226',
       location: 'India',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=angadpaswan',
+      avatar: 'https://raw.githubusercontent.com/Angad14-glitch/portfolio/main/myphot.jpeg',
       resumeUrl: 'https://example.com/resume.pdf',
       socialLinks: {
         github: 'https://github.com/Angad14-glitch',
